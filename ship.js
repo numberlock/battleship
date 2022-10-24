@@ -13,6 +13,11 @@ const Ship = function (leng) {
 
   return { hit, health, isSunk };
 };
-let newShip = Ship(6);
 
-/* module.exports = newShip;*/
+/* const inventory = [];
+(function test(ship) {
+  const newShip = Ship(5);
+  newShip.pos = ["1,2", "1,3", "1,4", "1,5", "1,6"];
+  inventory.push({ name: "example", newShip });
+})();
+ */
