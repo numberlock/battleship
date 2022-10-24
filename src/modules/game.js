@@ -1,5 +1,8 @@
-function game() {
-  const player0 = Player("input field");
+import { Player } from "./player";
+import { Gameboard } from "./gameboard";
+
+export default function game() {
+  const player0 = Player("input");
   const player0Gameboard = Gameboard(0);
 
   const player1 = Player("AI");

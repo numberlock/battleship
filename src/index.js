@@ -1,4 +1,10 @@
 import "./style.css";
+import game from "./modules/game.js";
+import { createGameBoard } from "./modules/gameboard";
+import { createShipSelector } from "./modules/gameboard";
+
+createGameBoard("player0");
+createShipSelector();
 
 //DOM
 /*

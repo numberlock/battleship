@@ -1,6 +1,6 @@
 import { shipInventory } from "./ship-inventory";
 
-function createGameBoard(player) {
+export function createGameBoard(player) {
   const playerContainer = document.querySelector(`.${player}`);
 
   for (let x = 0; x < 10; x++) {
@@ -25,9 +25,49 @@ function createGameBoard(player) {
   }
 }
 
-function createShipSelector() {
-  //display name from ship inventory
-  //for every 1 in ship size add square
+export function createShipSelector() {
+  const htmlSelector = document.querySelector(".ship-selector");
+  for (let i = 0; i < shipInventory.length; i++) {
+    const shipContainer = document.createElement("div");
+    shipContainer.dataset.ship = `${shipInventory[i].name}`;
+
+    const shipName = document.createElement("div");
+    shipName.textContent = `${shipInventory[i].name}`;
+
+    const shipSize = document.createElement("div");
+    for (let j = 0; j < shipInventory[i].size; j++) {
+      const sizeSquare = document.createElement("div");
+      sizeSquare.classList.add(
+        "shipSizeSquare",
+        `${shipContainer.dataset.ship}-shipSizeSquare`
+      );
+      shipSize.appendChild(sizeSquare);
+    }
+    shipContainer.append(shipName, shipSize);
+    /* EVENT LISTENER */
+    //could be added to seperate function
+    shipContainer.addEventListener("click", () => {
+      const findActiveSelector = document.querySelector(".selected");
+      if (findActiveSelector !== null) {
+        const findActiveSelectorSquares = document.querySelectorAll(
+          `.${findActiveSelector.dataset.ship}-shipSizeSquare`
+        );
+        findActiveSelectorSquares.forEach((square) => {
+          square.classList.remove("selected-square");
+        });
+        findActiveSelector.classList.remove("selected");
+      }
+      shipContainer.classList.add("selected");
+      const findNewActiveSquares = document.querySelectorAll(
+        `.${shipContainer.dataset.ship}-shipSizeSquare`
+      );
+      findNewActiveSquares.forEach((square) => {
+        square.classList.add("selected-square");
+      });
+    });
+    htmlSelector.appendChild(shipContainer);
+  }
+
   //give squares same class/dataset as ship name
   //add event listener for ship selector
   //there should only be one "selected" class for all ships at a time
@@ -42,8 +82,6 @@ function createRotationButton() {
 }
 
 function selectedShip() {
-  //add selected ship an "active" class
-  //
   //save selected ship class to "selected"
   //return "selected"
 }
@@ -58,7 +96,7 @@ for(i= 0; i< shipinventory[i].size;i++)
 document.queryselector(`.${x+1,y}`)
 classList.add("green")
 */
-const Gameboard = function (player) {
+export const Gameboard = function (player) {
   let boardOwner = player;
   //how do we know where they are placed
   createGameBoard(boardOwner);

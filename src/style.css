@@ -7,3 +7,13 @@
 body {
   font-size: 62.5%;
 }
+
+.shipSizeSquare {
+  height: 1em;
+  width: 1em;
+  background-color: blue;
+}
+
+.selected-square {
+  background-color: red;
+}
