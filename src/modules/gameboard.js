@@ -22,17 +22,52 @@ export function createGameBoard(player) {
           element.classList.remove("hover");
         });
         createY.classList.add("hover");
-        //SHOULD ALSO REMOVE HOVER
       });
 
       createY.addEventListener("click", () => {
-        if (selectedShip !== undefined) game.player0Gameboard.placeShip(x, y);
-        console.log(game.player0Gameboard.inventory);
+        /* here */
+        let current = seperateCoordinates(createY.dataset.cord);
+        checkSquareValidity(current.x, current.y);
+        if (
+          selectedShip !== undefined &&
+          checkSquareValidity(current.x, current.y) !== false
+        )
+          game.player0Gameboard.placeShip(x, y);
       });
       createX.appendChild(createY);
     }
     playerContainer.appendChild(createX);
   }
+}
+
+function seperateCoordinates(coord) {
+  let coordSplit = coord.split(",");
+  let coordNumbers = coordSplit.map((num) => Number(num));
+  let x = coordNumbers[0];
+  let y = coordNumbers[1];
+  return { x, y };
+}
+
+function checkSquareValidity(x, y) {
+  const buttonSelector = document.querySelector(".rotation-button");
+  let selected = selectedShip;
+  let isValid = "";
+  for (let i = 0; i < shipInventory.length; i++) {
+    if (selected === shipInventory[i].name) {
+      if (buttonSelector.textContent === "Vertical") {
+        for (let j = 0; j < shipInventory[i].size; j++) {
+          let btnVer = document.querySelector(`[data-cord='${x},${y - j}']`);
+          if (btnVer.classList.contains("placed")) isValid = false;
+        }
+      } else {
+        for (let k = 0; k < shipInventory[i].size; k++) {
+          let btnHor = document.querySelector(`[data-cord='${x + k},${y}']`);
+          if (btnHor.classList.contains("placed")) isValid = false;
+        }
+      }
+    }
+  }
+  return isValid;
 }
 
 export function createShipSelector() {
@@ -113,7 +148,6 @@ export function Gameboard(player) {
   let inventory = [];
 
   function placeShip(x, y) {
-    console.log(selectedShip);
     let selected = selectedShip;
     /* looks for ship size of selectedShip */
     for (let i = 0; i < shipInventory.length; i++) {

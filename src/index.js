@@ -2,7 +2,6 @@ import "./style.css";
 import { game } from "./modules/game.js";
 
 /* Gameboard("player0");
- 
 createGameBoard("player0");
 createShipSelector();
 createRotationButton(); */
