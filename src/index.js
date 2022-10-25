@@ -1,10 +1,11 @@
 import "./style.css";
-import game from "./modules/game.js";
-import { createGameBoard } from "./modules/gameboard";
-import { createShipSelector } from "./modules/gameboard";
+import { game } from "./modules/game.js";
 
+/* Gameboard("player0");
+ 
 createGameBoard("player0");
 createShipSelector();
+createRotationButton(); */
 
 //DOM
 /*

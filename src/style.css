@@ -8,6 +8,14 @@ body {
   font-size: 62.5%;
 }
 
+.container {
+  display: flex;
+}
+
+.ship-size-container {
+  display: flex;
+}
+
 .shipSizeSquare {
   height: 1em;
   width: 1em;
@@ -15,5 +23,25 @@ body {
 }
 
 .selected-square {
-  background-color: red;
+  background-color: green;
+}
+
+.placed {
+  background-color: blue;
+}
+
+.player0 {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  height: 40em;
+  width: 40em;
+}
+
+.board-square {
+  height: 4em;
+  width: 4em;
+}
+
+.hover {
+  background-color: rgb(214, 214, 214);
 }

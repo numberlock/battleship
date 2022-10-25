@@ -1,13 +1,15 @@
 import { Player } from "./player";
 import { Gameboard } from "./gameboard";
 
-export default function game() {
-  const player0 = Player("input");
-  const player0Gameboard = Gameboard(0);
+export const game = (function () {
+  /*   const player0 = Player("input");
+  
+   */ const player0Gameboard = Gameboard("player0");
+  const test = "a";
 
-  const player1 = Player("AI");
-  const player1Gameboard = Gameboard(1);
-
+  /*   const player1 = Player("AI");
+  const player1Gameboard = Gameboard("player1");
+ */
   let activePlayer = "player0";
   //while (player0 ships are not all sunk || p1 ships are not all sunk )
   //check which player is active
@@ -16,7 +18,8 @@ export default function game() {
   // -> remove event listener
   // -> check if all ships are sunk
   // -> change active player
-}
+  return { player0Gameboard, test };
+})();
 
 /* 
 

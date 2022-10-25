@@ -1,6 +1,5 @@
-const Ship = function (leng) {
-  this.leng = leng;
-  this.health = leng;
+export function Ship(leng) {
+  let health = leng;
 
   function hit() {
     this.health -= 1;
@@ -12,7 +11,7 @@ const Ship = function (leng) {
   }
 
   return { hit, health, isSunk };
-};
+}
 
 /* const inventory = [];
 (function test(ship) {
