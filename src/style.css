@@ -8,8 +8,20 @@ body {
   font-size: 62.5%;
 }
 
-.container {
+.input-container {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.board-container {
+  display: flex;
+}
+
+.board-square {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .ship-size-container {
@@ -30,18 +42,40 @@ body {
   background-color: blue;
 }
 
-.player0 {
+.display {
+  height: 20em;
+  width: 20em;
+  background-color: gray;
+}
+
+.player0,
+.player1 {
   display: grid;
   grid-template-columns: repeat(10, 1fr);
-  height: 40em;
-  width: 40em;
+  border: 1px solid black;
 }
 
 .board-square {
-  height: 4em;
-  width: 4em;
+  height: 5em;
+  width: 5em;
 }
 
 .hover {
   background-color: rgb(214, 214, 214);
+}
+
+.missed-shots {
+  background-color: yellow;
+}
+
+.hit {
+  background-color: green;
+}
+
+.sunk {
+  background-color: red;
+}
+
+.hidden {
+  display: none;
 }

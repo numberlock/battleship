@@ -1,16 +1,41 @@
 import { Player } from "./player";
-import { Gameboard } from "./gameboard";
+import {
+  Gameboard,
+  createRotationButton,
+  createShipSelector,
+} from "./gameboard";
 
-export const game = (function () {
-  /*   const player0 = Player("input");
-  
-   */ const player0Gameboard = Gameboard("player0");
-  const test = "a";
+(function startGame() {
+  const startBtn = document.querySelector(".start-game");
+  const getInput = document.querySelector("#player-name");
+  const getInputContainer = document.querySelector(".input-container");
+  const boardContainer = document.querySelector(".board-container");
 
-  /*   const player1 = Player("AI");
+  startBtn.addEventListener("click", () => {
+    if (getInput.value !== "") {
+      getInputContainer.classList.toggle("hidden");
+      boardContainer.classList.toggle("hidden");
+      game = gameLoop(getInput.value);
+      createRotationButton();
+      createShipSelector();
+    }
+  });
+})();
+
+function gameLoop(input) {
+  const pushPlayer0 = document.querySelector(".player0-name");
+  const pushPlayer1 = document.querySelector(".player1-name");
+
+  const player0 = Player(input);
+  const player0Gameboard = Gameboard("player0");
+  pushPlayer0.textContent = input;
+
+  const player1 = Player("AI");
   const player1Gameboard = Gameboard("player1");
- */
+  pushPlayer1.textContent = player1.playerName;
+
   let activePlayer = "player0";
+  let gameStatus = 0;
   //while (player0 ships are not all sunk || p1 ships are not all sunk )
   //check which player is active
   // if activeplayer === x add event listener to other board
@@ -18,8 +43,10 @@ export const game = (function () {
   // -> remove event listener
   // -> check if all ships are sunk
   // -> change active player
-  return { player0Gameboard, test };
-})();
+  return { player0Gameboard, player1Gameboard, gameStatus, activePlayer };
+}
+
+export let game;
 
 /* 
 

@@ -1,11 +1,12 @@
 import { shipInventory } from "./ship-inventory";
 import { Ship } from "./ship";
 import { game } from "./game";
+import { populateInventory } from "./populateInventory";
 
 let selectedShip;
 let alreadyPlaced = [];
 
-export function createGameBoard(player) {
+function createGameBoard(player) {
   const playerContainer = document.querySelector(`.${player}`);
 
   for (let x = 0; x < 10; x++) {
@@ -13,31 +14,51 @@ export function createGameBoard(player) {
     for (let y = 9; y >= 0; y--) {
       const createY = document.createElement("div");
       createY.dataset.cord = `${x},${y}`;
-      createY.classList.add("board-square");
+      createY.classList.add("board-square", `${player}-square`);
       createY.textContent = `${x},${y}`;
 
       createY.addEventListener("mouseover", () => {
-        const allHoverClasses = document.querySelectorAll(".hover");
-        allHoverClasses.forEach((element) => {
-          element.classList.remove("hover");
-        });
+        removeHover();
         createY.classList.add("hover");
+        let current = seperateCoordinates(createY.dataset.cord);
+        checkSquareValidity(current.x, current.y);
       });
 
       createY.addEventListener("click", () => {
-        /* here */
-        let current = seperateCoordinates(createY.dataset.cord);
-        checkSquareValidity(current.x, current.y);
+        //if it includes div on board1
+        if (game.gameStatus === 0) {
+          let current = seperateCoordinates(createY.dataset.cord);
+          checkSquareValidity(current.x, current.y);
+          if (
+            selectedShip !== undefined &&
+            checkSquareValidity(current.x, current.y) !== false
+          )
+            game.player0Gameboard.placeShip(x, y);
+        }
         if (
-          selectedShip !== undefined &&
-          checkSquareValidity(current.x, current.y) !== false
-        )
-          game.player0Gameboard.placeShip(x, y);
+          game.gameStatus === 1 &&
+          game.activePlayer === "player0" &&
+          createY.classList.contains("player1-square")
+        ) {
+          if (
+            !game.player1Gameboard.shotsHit.includes(`${x},${y}`) &&
+            !game.player1Gameboard.shotsMissed.includes(`${x},${y}`)
+          )
+            game.player1Gameboard.receiveAttack(`${x},${y}`);
+        }
       });
+
       createX.appendChild(createY);
     }
     playerContainer.appendChild(createX);
   }
+}
+
+function removeHover() {
+  const allHoverClasses = document.querySelectorAll(".hover");
+  allHoverClasses.forEach((element) => {
+    element.classList.remove("hover");
+  });
 }
 
 function seperateCoordinates(coord) {
@@ -57,11 +78,13 @@ function checkSquareValidity(x, y) {
       if (buttonSelector.textContent === "Vertical") {
         for (let j = 0; j < shipInventory[i].size; j++) {
           let btnVer = document.querySelector(`[data-cord='${x},${y - j}']`);
+          btnVer.classList.add("hover");
           if (btnVer.classList.contains("placed")) isValid = false;
         }
       } else {
         for (let k = 0; k < shipInventory[i].size; k++) {
           let btnHor = document.querySelector(`[data-cord='${x + k},${y}']`);
+          btnHor.classList.add("hover");
           if (btnHor.classList.contains("placed")) isValid = false;
         }
       }
@@ -72,6 +95,7 @@ function checkSquareValidity(x, y) {
 
 export function createShipSelector() {
   const htmlSelector = document.querySelector(".ship-selector");
+  if (htmlSelector.hasChildNodes()) return;
   for (let i = 0; i < shipInventory.length; i++) {
     const shipContainer = document.createElement("div");
     shipContainer.dataset.ship = `${shipInventory[i].name}`;
@@ -129,30 +153,39 @@ export function createRotationButton() {
   });
 }
 
-// HOVER EFFECT ********************
-//check what square has "hover" class, add "hover" to other +5(check selected for number) horizontal/verticl depending on button
-//hover effect on every square + squares horizontal/verticl of "selected" battleship size
-//
-/* 
-document.querySelector(".hover").dataset
-for(i= 0; i< shipinventory[i].size;i++)
-document.queryselector(`.${x+1,y}`)
-classList.add("green")
-*/
+function checkNumPlaced() {
+  const getRotationButton = document.querySelector(".rotation-button");
+  const getShipSelector = document.querySelector(".ship-selector");
+  const getPlayer1Container = document.querySelector(".player1-container");
+  const getDisplay = document.querySelector(".display");
+  if (alreadyPlaced.length === 1) {
+    getRotationButton.classList.toggle("hidden");
+    getShipSelector.classList.toggle("hidden");
+    getPlayer1Container.classList.toggle("hidden");
+    getDisplay.classList.toggle("hidden");
+    game.gameStatus = 1;
+    populateInventory();
+  }
+}
+
 export function Gameboard(player) {
   let boardOwner = player;
+  let shotsHit = [];
+  let shotsMissed = [];
+  let sunkCounter = 0;
+
   createGameBoard(boardOwner);
-  createRotationButton();
-  createShipSelector();
 
   let inventory = [];
 
   function placeShip(x, y) {
+    removeHover();
     let selected = selectedShip;
     /* looks for ship size of selectedShip */
     for (let i = 0; i < shipInventory.length; i++) {
       if (selected === shipInventory[i].name) {
         let newShip = Ship(shipInventory[i].size);
+        newShip.name = selected;
         newShip.pos = [];
 
         /* loop iterates through ships size and adds coordinates into ship array */
@@ -186,26 +219,73 @@ export function Gameboard(player) {
     alreadyPlacedShipSquares.forEach((element) => {
       element.classList.remove("selected-square");
     });
+    checkNumPlaced();
   }
 
-  //takes a pair of coordinates
-  //sends the ‘hit’ function to the correct ship, or records the coordinates of the missed shot
   function receiveAttack(coord) {
-    //check "coords" if any of  ships in "inventory" was hit
-    // if true run .hit() & "red" class to "coords"
-    // else save "coords" to "missedShots" & add "yellow" class
-    //check if ship was sunk / ADD COUNTER FOR ALL SUNK SHIPS UNDER BOARD
-    //check if all ships have been sunk
+    const player0 = document.querySelector(".player0");
+    const player1 = document.querySelector(".player1");
+    const whosOwner = boardOwner === player0 ? player0 : player1;
+
+    let currentShip;
+    let shot = coord;
+    let didHit;
+    for (let i = 0; i < inventory.length; i++) {
+      let position = inventory[i].pos.length;
+      for (let j = 0; j < position; j++) {
+        if (inventory[i].pos[j] === shot) {
+          currentShip = inventory[i];
+          inventory[i].hit();
+          didHit = true;
+          currentSank(currentShip, boardOwner, sunkCounter);
+        }
+      }
+    }
+    if (didHit) {
+      const shotHit = whosOwner.querySelector(`[data-cord="${shot}"]`);
+      shotHit.classList.add("hit");
+      shotsHit.push(shot);
+    } else {
+      let findMissedShot = whosOwner.querySelector(`[data-cord="${shot}"]`);
+      findMissedShot.classList.add("missed-shots");
+      shotsMissed.push(shot);
+    }
+
+    function currentSank() {
+      console.log("dead:" + currentShip.isSunk());
+      if (currentShip.isSunk()) {
+        sunkCounter += 1;
+        console.log(currentShip.pos);
+        for (let i = 0; i < currentShip.pos.length; i++) {
+          //add options for p0,p1
+          let findSunkenSquare = whosOwner.querySelector(
+            `[data-cord="${currentShip.pos[i]}"]`
+          );
+          findSunkenSquare.classList.add("sunk");
+        }
+        pushToShipsSunk();
+        allSunk();
+      }
+    }
+
+    function allSunk() {
+      if (sunkCounter === 5) {
+        console.log("Game ended");
+        //end game
+      }
+    }
+
+    function pushToShipsSunk() {
+      let getTotalSunk = document.querySelector(`.${boardOwner}-sunk`);
+      getTotalSunk.textContent = `Ships sunk: ${sunkCounter}/5`;
+    }
+    console.log(shotsHit, shotsMissed);
   }
 
-  //Gameboards should keep track of missed attacks so they can display them properly.
-  let missedShots = [];
-  return { placeShip, inventory };
+  return { placeShip, receiveAttack, inventory, shotsMissed, shotsHit };
 }
 
 /* 
 test to add later:
-if hover + trail is bigger then grid, dont show trail
-if there is already a ship on certain coordinate
-if shot has already been shot there, dont do it again
+if AI shot has already been shot there, dont do it again
 */
