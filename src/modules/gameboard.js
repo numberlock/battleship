@@ -5,6 +5,7 @@ import { populateInventory } from "./populateInventory";
 
 let selectedShip;
 let alreadyPlaced = [];
+export let endGame;
 
 function createGameBoard(player) {
   const playerContainer = document.querySelector(`.${player}`);
@@ -25,7 +26,6 @@ function createGameBoard(player) {
       });
 
       createY.addEventListener("click", () => {
-        //if it includes div on board1
         if (game.gameStatus === 0) {
           let current = seperateCoordinates(createY.dataset.cord);
           checkSquareValidity(current.x, current.y);
@@ -43,8 +43,10 @@ function createGameBoard(player) {
           if (
             !game.player1Gameboard.shotsHit.includes(`${x},${y}`) &&
             !game.player1Gameboard.shotsMissed.includes(`${x},${y}`)
-          )
+          ) {
             game.player1Gameboard.receiveAttack(`${x},${y}`);
+            game.gameLoop();
+          }
         }
       });
 
@@ -163,8 +165,8 @@ function checkNumPlaced() {
     getShipSelector.classList.toggle("hidden");
     getPlayer1Container.classList.toggle("hidden");
     getDisplay.classList.toggle("hidden");
-    game.gameStatus = 1;
     populateInventory();
+    game.gameStatus = 1;
   }
 }
 
@@ -223,9 +225,14 @@ export function Gameboard(player) {
   }
 
   function receiveAttack(coord) {
+    const getDisplay = document.querySelector(".display");
     const player0 = document.querySelector(".player0");
     const player1 = document.querySelector(".player1");
-    const whosOwner = boardOwner === player0 ? player0 : player1;
+    const whosOwner = boardOwner === "player0" ? player0 : player1;
+    const playerSelector =
+      boardOwner === "player0"
+        ? game.player1.playerName
+        : game.player0.playerName;
 
     let currentShip;
     let shot = coord;
@@ -245,19 +252,18 @@ export function Gameboard(player) {
       const shotHit = whosOwner.querySelector(`[data-cord="${shot}"]`);
       shotHit.classList.add("hit");
       shotsHit.push(shot);
+      getDisplay.textContent = `${playerSelector}'s shot hit!`;
     } else {
       let findMissedShot = whosOwner.querySelector(`[data-cord="${shot}"]`);
       findMissedShot.classList.add("missed-shots");
       shotsMissed.push(shot);
+      getDisplay.textContent = `${playerSelector}'s shot missed!`;
     }
 
     function currentSank() {
-      console.log("dead:" + currentShip.isSunk());
       if (currentShip.isSunk()) {
         sunkCounter += 1;
-        console.log(currentShip.pos);
         for (let i = 0; i < currentShip.pos.length; i++) {
-          //add options for p0,p1
           let findSunkenSquare = whosOwner.querySelector(
             `[data-cord="${currentShip.pos[i]}"]`
           );
@@ -269,23 +275,14 @@ export function Gameboard(player) {
     }
 
     function allSunk() {
-      if (sunkCounter === 5) {
-        console.log("Game ended");
-        //end game
-      }
+      if (sunkCounter === 5) endGame = boardOwner;
     }
 
     function pushToShipsSunk() {
       let getTotalSunk = document.querySelector(`.${boardOwner}-sunk`);
       getTotalSunk.textContent = `Ships sunk: ${sunkCounter}/5`;
     }
-    console.log(shotsHit, shotsMissed);
   }
 
   return { placeShip, receiveAttack, inventory, shotsMissed, shotsHit };
 }
-
-/* 
-test to add later:
-if AI shot has already been shot there, dont do it again
-*/

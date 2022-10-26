@@ -18,7 +18,7 @@ export function populateInventory() {
   submarine.name = "submarine";
   submarine.pos = ["9,5", "9,4", "9,3"];
 
-  let patrol = Ship(2);
+  let patrol = Ship(1);
   patrol.name = "patrol";
   patrol.pos = ["5,5", "6,5"];
 
