@@ -4,12 +4,26 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>BATTLESHIP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Arimo&family=IBM+Plex+Mono&family=Staatliches&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
+    <h1 class="title">BATTLESHIP</h1>
+    <div class="color-desc hidden">
+      <div class="hit-color cds"></div>
+      <p class="color-text">HIT</p>
+      <div class="miss-color cds"></div>
+      <p class="color-text">MISS</p>
+      <div class="sunk-color cds"></div>
+      <p class="color-text">SHIP SUNK</p>
+    </div>
     <div class="input-container">
-      <h1 class="title">BATTLESHIPS</h1>
-      <label for="player-name">Eneter Player Name:</label>
+      <label for="player-name">Enter Player Name:</label>
       <input id="player-name" />
       <button class="start-game">START GAME</button>
     </div>
@@ -17,9 +31,11 @@
       <div class="player0-container">
         <div class="player0-name"></div>
         <div class="player0"></div>
-        <div class="player0-sunk">Ships sunk: 0/5</div>
+        <div class="player0-sunk hidden">Ships sunk: 0/5</div>
       </div>
-      <div class="display hidden"></div>
+      <div class="display-container hidden">
+        <div class="display"></div>
+      </div>
       <div class="container-dynamic">
         <button class="rotation-button">Vertical</button>
         <div class="ship-selector"></div>
