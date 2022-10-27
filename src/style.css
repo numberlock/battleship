@@ -5,17 +5,23 @@
 }
 
 body {
+  font-family: "Arimo", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
   font-size: 62.5%;
+}
+
+.title {
+  font-family: "Staatliches", cursive;
+  font-size: 10em;
 }
 
 .input-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-.board-container {
-  display: flex;
 }
 
 .board-square {
@@ -28,25 +34,31 @@ body {
 .ship-size-container {
   display: flex;
 }
+.board-square {
+  background-color: rgb(213, 213, 213);
+}
 
-.shipSizeSquare {
-  height: 1em;
-  width: 1em;
-  background-color: blue;
+.shipSizeSquare,
+.placed {
+  background-color: rgb(98, 98, 98);
 }
 
 .selected-square {
-  background-color: green;
+  background-color: white;
 }
 
-.placed {
-  background-color: blue;
+.display-container {
+  display: flex;
+  justify-content: center;
+  height: 20em;
+  width: 20em;
 }
 
 .display {
-  height: 20em;
-  width: 20em;
-  background-color: gray;
+  font-family: "IBM Plex Mono", monospace;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .player0,
@@ -56,25 +68,50 @@ body {
   border: 1px solid black;
 }
 
-.board-square {
+.board-square,
+.shipSizeSquare,
+.cds {
   height: 5em;
   width: 5em;
+  border: 1px solid black;
 }
 
 .hover {
-  background-color: rgb(214, 214, 214);
+  background-color: rgb(157, 157, 157);
 }
 
-.missed-shots {
-  background-color: yellow;
+.missed-shots,
+.miss-color {
+  background-color: white;
 }
 
-.hit {
-  background-color: green;
+.hit,
+.hit-color {
+  background-color: rgb(230, 62, 143);
 }
 
-.sunk {
-  background-color: red;
+.sunk,
+.sunk-color {
+  background-color: black;
+}
+
+.selected-placed {
+  background-color: white;
+}
+
+.board-container {
+  margin-top: 2em;
+  display: flex;
+}
+
+.color-desc {
+  display: flex;
+  align-items: center;
+  gap: 3em;
+}
+
+.color-text {
+  font-size: 2em;
 }
 
 .hidden {

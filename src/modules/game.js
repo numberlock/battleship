@@ -1,6 +1,7 @@
+import "../style.css";
+
 import { Player } from "./player";
 import {
-  endGame,
   Gameboard,
   createRotationButton,
   createShipSelector,

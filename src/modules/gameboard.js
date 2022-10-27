@@ -5,7 +5,6 @@ import { populateInventory } from "./populateInventory";
 
 let selectedShip;
 let alreadyPlaced = [];
-export let endGame;
 
 function createGameBoard(player) {
   const playerContainer = document.querySelector(`.${player}`);
@@ -16,7 +15,7 @@ function createGameBoard(player) {
       const createY = document.createElement("div");
       createY.dataset.cord = `${x},${y}`;
       createY.classList.add("board-square", `${player}-square`);
-      createY.textContent = `${x},${y}`;
+      //createY.textContent = `${x},${y}`;
 
       createY.addEventListener("mouseover", () => {
         removeHover();
@@ -104,6 +103,7 @@ export function createShipSelector() {
 
     const shipName = document.createElement("div");
     shipName.textContent = `${shipInventory[i].name}`;
+    shipName.classList.add("shipselector-placed");
 
     const shipSize = document.createElement("div");
     shipSize.classList.add("ship-size-container");
@@ -159,12 +159,17 @@ function checkNumPlaced() {
   const getRotationButton = document.querySelector(".rotation-button");
   const getShipSelector = document.querySelector(".ship-selector");
   const getPlayer1Container = document.querySelector(".player1-container");
-  const getDisplay = document.querySelector(".display");
-  if (alreadyPlaced.length === 1) {
+  const getDisplay = document.querySelector(".display-container");
+  const getSSP1 = document.querySelector(".player0-sunk");
+  const getColorDesc = document.querySelector(".color-desc");
+  if (alreadyPlaced.length === 5) {
     getRotationButton.classList.toggle("hidden");
     getShipSelector.classList.toggle("hidden");
     getPlayer1Container.classList.toggle("hidden");
     getDisplay.classList.toggle("hidden");
+    getSSP1.classList.toggle("hidden");
+    getColorDesc.classList.toggle("hidden");
+
     populateInventory();
     game.gameStatus = 1;
   }
@@ -175,10 +180,9 @@ export function Gameboard(player) {
   let shotsHit = [];
   let shotsMissed = [];
   let sunkCounter = 0;
+  let inventory = [];
 
   createGameBoard(boardOwner);
-
-  let inventory = [];
 
   function placeShip(x, y) {
     removeHover();
@@ -219,6 +223,7 @@ export function Gameboard(player) {
       `.${selected}-shipSizeSquare`
     );
     alreadyPlacedShipSquares.forEach((element) => {
+      element.classList.add("selected-placed");
       element.classList.remove("selected-square");
     });
     checkNumPlaced();
@@ -244,7 +249,7 @@ export function Gameboard(player) {
           currentShip = inventory[i];
           inventory[i].hit();
           didHit = true;
-          currentSank(currentShip, boardOwner, sunkCounter);
+          currentSank();
         }
       }
     }
@@ -257,6 +262,7 @@ export function Gameboard(player) {
       let findMissedShot = whosOwner.querySelector(`[data-cord="${shot}"]`);
       findMissedShot.classList.add("missed-shots");
       shotsMissed.push(shot);
+
       getDisplay.textContent = `${playerSelector}'s shot missed!`;
     }
 
@@ -275,7 +281,15 @@ export function Gameboard(player) {
     }
 
     function allSunk() {
-      if (sunkCounter === 5) endGame = boardOwner;
+      if (sunkCounter === 5) {
+        const boardContainer = document.querySelector(".board-container");
+        const getColorDesc = document.querySelector(".color-desc");
+        const getTitle = document.querySelector(".title");
+
+        getColorDesc.classList.toggle("hidden");
+        boardContainer.classList.toggle("hidden");
+        getTitle.textContent = `${playerSelector} won!`;
+      }
     }
 
     function pushToShipsSunk() {
@@ -284,5 +298,12 @@ export function Gameboard(player) {
     }
   }
 
-  return { placeShip, receiveAttack, inventory, shotsMissed, shotsHit };
+  return {
+    placeShip,
+    receiveAttack,
+    inventory,
+    shotsMissed,
+    shotsHit,
+    sunkCounter,
+  };
 }
